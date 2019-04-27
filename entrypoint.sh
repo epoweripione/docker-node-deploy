@@ -66,9 +66,9 @@ fi
 # Start webhook
 cd /opt/node/webhook
 if [ -z "$GOGS" ]; then
-	pm2 start index.js --no-daemon --name webhook
+	pm2 start index.js --name webhook
 else
-	pm2 start gogs.js --no-daemon --name webhook
+	pm2 start gogs.js --name webhook
 fi
 
 # Start app
