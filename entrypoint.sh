@@ -31,8 +31,8 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 		# npm install github-webhook-handler
 		sed -i "s/WEBHOOK-HANDLER/github-webhook-handler/" /opt/node/webhook/index.js
 
-		rm -rf /opt/node/app
-		git clone $GITHUB /opt/node/app
+		rm -rf /opt/node/app && mkdir -p /opt/node
+		cd /opt/node && git clone $GITHUB ./app
 
 		cd /opt/node/webhook
 		pm2 start index.js --name webhook
@@ -45,8 +45,8 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 		# npm install node-gitlab-webhook
 		sed -i "s/WEBHOOK-HANDLER/node-gitlab-webhook/" /opt/node/webhook/index.js
 
-		rm -rf /opt/node/app
-		git clone $GITLAB /opt/node/app
+		rm -rf /opt/node/app && mkdir -p /opt/node
+		cd /opt/node && git clone $GITLAB ./app
 
 		cd /opt/node/webhook
 		pm2 start index.js --name webhook
@@ -59,8 +59,8 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 		# npm install gogs-webhook-handler
 		sed -i "s/WEBHOOK-HANDLER/gogs-webhook-handler/" /opt/node/webhook/gogs.js
 
-		rm -rf /opt/node/app
-		git clone $GOGS /opt/node/app
+		rm -rf /opt/node/app && mkdir -p /opt/node
+		cd /opt/node && git clone $GOGS ./app
 
 		cd /opt/node/webhook
 		pm2 start gogs.js --name webhook
