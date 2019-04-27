@@ -24,7 +24,7 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 	cp /var/lib/webhook/index.js /opt/node/webhook/index.js
 	cp /var/lib/webhook/gogs.js /opt/node/webhook/gogs.js
 
-	[ -z $WEBHOOK_SECRET ] && WEBHOOK_SECRET=123456
+	[ -z "$WEBHOOK_SECRET" ] && WEBHOOK_SECRET=123456
 	sed -i "s/WEBHOOK_SECRET/$WEBHOOK_SECRET/" /opt/node/webhook/index.js
 
 	# # pm2-webshell
@@ -35,7 +35,7 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 	# pm2 conf pm2-webshell:password pm2AdminP0ssW0rd
 
 	# Github webhook
-	if [ ! -z $GITHUB ]; then
+	if [ ! -z "$GITHUB" ]; then
 		# npm install github-webhook-handler
 		sed -i "s/WEBHOOK-HANDLER/github-webhook-handler/" /opt/node/webhook/index.js
 
@@ -44,7 +44,7 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 	fi
 
 	# Gitlab webhook
-	if [ ! -z $GITLAB ]; then
+	if [ ! -z "$GITLAB" ]; then
 		# npm install node-gitlab-webhook
 		sed -i "s/WEBHOOK-HANDLER/node-gitlab-webhook/" /opt/node/webhook/index.js
 
@@ -53,7 +53,7 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 	fi
 
 	# Gogs webhook
-	if [ ! -z $GOGS ]; then
+	if [ ! -z "$GOGS" ]; then
 		# npm install gogs-webhook-handler
 		sed -i "s/WEBHOOK-HANDLER/gogs-webhook-handler/" /opt/node/webhook/gogs.js
 
@@ -65,7 +65,7 @@ fi
 
 # Start webhook
 cd /opt/node/webhook
-if [ ! -z $GOGS ]; then
+if [ -z "$GOGS" ]; then
 	pm2 start index.js --no-daemon --name webhook
 else
 	pm2 start gogs.js --no-daemon --name webhook
