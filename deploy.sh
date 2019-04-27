@@ -19,7 +19,8 @@ pm2 describe ${APP_NAME} > /dev/null
 RUNNING=$?
 
 if [ "$RUNNING" -ne 0 ]; then
-    pm2 start ${PM2_CONFIG_FILE} --no-daemon
+    npm install
+    pm2 start ${PM2_CONFIG_FILE}
 else
     pm2 sendSignal SIGUSR2 ${PM2_CONFIG_FILE}
 fi
