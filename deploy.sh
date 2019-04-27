@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ex
+# set -ex
 
 APP_PATH='/opt/node/app'
 
