@@ -5,6 +5,7 @@
 # GOGS: Gitlab repository address
 # WEBHOOK_SECRET: git repository webhook secret
 # APP_NAME: node app name
+# PM2_CONFIG_FILE: pm2 config file name
 
 set -ex
 
@@ -25,6 +26,13 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 
 	[ -z $WEBHOOK_SECRET ] && WEBHOOK_SECRET=123456
 	sed -i "s/WEBHOOK_SECRET/$WEBHOOK_SECRET/" /opt/node/webhook/index.js
+
+	# # pm2-webshell
+	# # https://github.com/pm2-hive/pm2-webshell
+	# cd /opt/node/webhook/
+	# pm2 install pm2-webshell
+	# pm2 conf pm2-webshell:username pm2admin
+	# pm2 conf pm2-webshell:password pm2AdminP0ssW0rd
 
 	# Github webhook
 	if [ ! -z $GITHUB ]; then
@@ -57,7 +65,11 @@ fi
 
 # Start webhook
 cd /opt/node/webhook
-pm2 start index.js --no-daemon --name webhook
+if [ ! -z $GOGS ]; then
+	pm2 start index.js --no-daemon --name webhook
+else
+	pm2 start gogs.js --no-daemon --name webhook
+fi
 
 # Start app
 # [ -z "$PM2_CONFIG_FILE" ] && PM2_CONFIG_FILE=pm2.json
@@ -65,12 +77,12 @@ pm2 start index.js --no-daemon --name webhook
 /opt/node/webhook/deploy.sh
 
 
-# Tail log file to keep container running
+# # pm2 monitor to keep container running
+pm2 monit
+
+
+# # Tail log file to keep container running
 # [ -z "$TAILLOG" ] && export TAILLOG=/var/log/*.log
 # tail -f $TAILLOG
-
-
-# # crond -b -L /var/log/crond.log
-# # nginx -g "daemon off;"
 
 # exec "$@"
