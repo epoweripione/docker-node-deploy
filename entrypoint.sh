@@ -57,7 +57,7 @@ fi
 
 # Start webhook
 cd /opt/node/webhook
-pm2 start index.js --name webhook
+pm2 start index.js --no-daemon --name webhook
 
 # Start app
 # [ -z "$PM2_CONFIG_FILE" ] && PM2_CONFIG_FILE=pm2.json
@@ -66,8 +66,8 @@ pm2 start index.js --name webhook
 
 
 # Tail log file to keep container running
-[ -z "$TAILLOG" ] && export TAILLOG=/var/log/*.log
-tail -f $TAILLOG
+# [ -z "$TAILLOG" ] && export TAILLOG=/var/log/*.log
+# tail -f $TAILLOG
 
 
 # # crond -b -L /var/log/crond.log
