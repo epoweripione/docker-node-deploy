@@ -24,8 +24,10 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 	cp /var/lib/webhook/index.js /opt/node/webhook/index.js
 	cp /var/lib/webhook/gogs.js /opt/node/webhook/gogs.js
 
+	# git repository webhook secret
 	[ -z "$WEBHOOK_SECRET" ] && WEBHOOK_SECRET=123456
 	sed -i "s/WEBHOOK_SECRET/$WEBHOOK_SECRET/" /opt/node/webhook/index.js
+	sed -i "s/WEBHOOK_SECRET/$WEBHOOK_SECRET/" /opt/node/webhook/gogs.js
 
 	# # pm2-webshell
 	# # https://github.com/pm2-hive/pm2-webshell
@@ -35,40 +37,44 @@ if [ ! -f "/opt/node/webhook/index.js" ]; then
 	# pm2 conf pm2-webshell:password pm2AdminP0ssW0rd
 
 	# Github webhook
-	if [ ! -z "$GITHUB" ]; then
+	if [ -n "$GITHUB" ]; then
 		# npm install github-webhook-handler
 		sed -i "s/WEBHOOK-HANDLER/github-webhook-handler/" /opt/node/webhook/index.js
 
-		rm -rf /opt/node/app && mkdir -p /opt/node/
-		cd /opt/node/ && git clone $GITHUB /opt/node/app
+		GIT_ADDRESS=$GITHUB
 	fi
 
 	# Gitlab webhook
-	if [ ! -z "$GITLAB" ]; then
+	if [ -n "$GITLAB" ]; then
 		# npm install node-gitlab-webhook
 		sed -i "s/WEBHOOK-HANDLER/node-gitlab-webhook/" /opt/node/webhook/index.js
 
-		rm -rf /opt/node/app && mkdir -p /opt/node/
-		cd /opt/node/ && git clone $GITLAB ./app
+		GIT_ADDRESS=$GITLAB
 	fi
 
 	# Gogs webhook
-	if [ ! -z "$GOGS" ]; then
+	if [ -n "$GOGS" ]; then
 		# npm install gogs-webhook-handler
 		sed -i "s/WEBHOOK-HANDLER/gogs-webhook-handler/" /opt/node/webhook/gogs.js
 
-		rm -rf /opt/node/app && mkdir -p /opt/node/
-		cd /opt/node/ && git clone $GOGS ./app
+		GIT_ADDRESS=$GOGS
 	fi
 fi
 
+if [ -n "$GIT_ADDRESS" ]; then
+	if [ -d /opt/node/app/.git ]; then
+		cd /opt/node/app && git pull origin master
+	else
+		cd /opt/node/ && git clone $GIT_ADDRESS ./app
+	fi
+fi
 
 # Start webhook
 cd /opt/node/webhook
-if [ -z "$GOGS" ]; then
-	pm2 start index.js --name webhook
-else
+if [ -n "$GOGS" ]; then
 	pm2 start gogs.js --name webhook
+else
+	pm2 start index.js --name webhook
 fi
 
 # Start app
