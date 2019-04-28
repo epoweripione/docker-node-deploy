@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:11-alpine
 
 LABEL Maintainer="Ansley Leung" \
       Description="Auto generate and deploy node app use git repository webhook" \
