@@ -3,7 +3,7 @@ FROM node:11-alpine
 LABEL Maintainer="Ansley Leung" \
       Description="Auto generate and deploy node app use git repository webhook" \
       License="MIT License" \
-      Version="11.15.0"
+      Version="11.15"
 
 ENV TZ=Asia/Shanghai
 RUN set -ex && \
